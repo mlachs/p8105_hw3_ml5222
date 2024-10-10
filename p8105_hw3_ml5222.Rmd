@@ -44,7 +44,7 @@ ny_noaa %>%
 ## Problem 2 
 
 
-Import and clean the data 
+Import, clean and join the data 
 ```{r}
 NHANES_dem=
   read_csv('nhanes_covar.csv',skip=4) %>% 
@@ -64,4 +64,27 @@ NHANES_full=
 
 ```
 
+Produce a reader-friendly tables for count information 
+```{r}
+NHANES_full %>% 
+  select(sex,education,age) %>% 
+  group_by(sex,education) %>% 
+  count() %>% 
+  pivot_wider(names_from = sex,values_from = n)
+```
+
+Plot age distributions for men and women in each education category
+```{r}
+
+NHANES_full %>% 
+  ggplot(aes(x=age,fill = sex))+geom_histogram()+facet_grid(sex~education)
+```
+
+Based on these distributions, there doesn't seem to be much difference in the distributions between gender. For participants who have more then high school level education, participation is higher for younger participants. While 
+there seems to be more uniform distribution across the other education levels with slightly more older participants. 
+
+Looking at total activity 
+```{r}
+
+```
 
