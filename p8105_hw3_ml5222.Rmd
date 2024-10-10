@@ -1,0 +1,67 @@
+---
+title: "p8105_hw3_ml5222"
+author: "Miriam Lachs"
+date: "2024-10-09"
+output: github_document
+---
+
+Load packages
+```{r,echo=FALSE}
+library(tidyverse)
+```
+
+
+## Problem 1 
+
+Load data 
+```{r setup, include=FALSE}
+library(p8105.datasets)
+data("ny_noaa")
+
+```
+
+clean the data
+```{r}
+ny_noaa=
+  ny_noaa %>% 
+  mutate(
+    day=day(date),
+    month=month(date),
+    year=year(date),
+    prcp=prcp/10,
+    tmax=as.numeric(tmax)/10,
+    tmin=as.numeric(tmin)/10)
+```
+
+```{r}
+ny_noaa %>% 
+  ggplot(aes(x=snow))+geom_boxplot()
+
+ny_noaa %>% 
+  summarise(min_snow=min(snow,na.rm =TRUE))
+```
+
+## Problem 2 
+
+
+Import and clean the data 
+```{r}
+NHANES_dem=
+  read_csv('nhanes_covar.csv',skip=4) %>% 
+  janitor::clean_names()
+NHANES_acc=read_csv('nhanes_accel.csv') %>% 
+  janitor::clean_names()
+
+NHANES_full=
+  NHANES_dem %>% 
+  left_join(NHANES_acc,'seqn') %>% 
+  filter(age>21) %>% 
+  drop_na(,c(sex,age,bmi,education)) %>% 
+  mutate(
+    sex=as.factor(ifelse(sex==1,'male','female')),
+    education=as.factor(case_match(education, 1~'Less than high school',2~'High school equivalent',3~'More than high school'))
+         )
+
+```
+
+
