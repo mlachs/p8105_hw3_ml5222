@@ -91,3 +91,43 @@ NHANES_full %>%
   ggplot(aes(x=age,y=total_activity,colour = sex))+geom_point()+facet_grid(~education)+geom_smooth(se=FALSE)
 ```
 
+Based on these plots we can see that activity tends to decrease as age increases. We also can see that for those with a high school equivalent education or above, women tend to be more active then men. Even with these trends we can see that activity is pretty widely distributed. 
+
+Plot across the day
+```{r}
+NHANES_full %>% 
+  mutate(T00=select(., min1:min60) %>% rowSums(na.rm = TRUE),
+         T01=select(., min61:min120) %>% rowSums(na.rm = TRUE),
+         T02=select(., min121:min180) %>% rowSums(na.rm = TRUE),
+         T03=select(., min181:min240) %>% rowSums(na.rm = TRUE),
+         T04=select(., min241:min300) %>% rowSums(na.rm = TRUE),
+         T05=select(., min301:min360) %>% rowSums(na.rm = TRUE),
+         T06=select(., min361:min420) %>% rowSums(na.rm = TRUE),
+         T07=select(., min421:min480) %>% rowSums(na.rm = TRUE),
+         T08=select(., min481:min540) %>% rowSums(na.rm = TRUE),
+         T09=select(., min541:min600) %>% rowSums(na.rm = TRUE),
+         T10=select(., min601:min660) %>% rowSums(na.rm = TRUE),
+         T11=select(., min661:min720) %>% rowSums(na.rm = TRUE),
+         T12=select(., min721:min780) %>% rowSums(na.rm = TRUE),
+         T13=select(., min781:min840) %>% rowSums(na.rm = TRUE),
+         T14=select(., min841:min900) %>% rowSums(na.rm = TRUE),
+         T15=select(., min901:min960) %>% rowSums(na.rm = TRUE),
+         T16=select(., min961:min1020) %>% rowSums(na.rm = TRUE),
+         T17=select(., min1021:min1080) %>% rowSums(na.rm = TRUE),
+         T18=select(., min1081:min1140) %>% rowSums(na.rm = TRUE),
+         T19=select(., min1141:min1200) %>% rowSums(na.rm = TRUE),
+         T20=select(., min1201:min1260) %>% rowSums(na.rm = TRUE),
+         T21=select(., min1261:min1320) %>% rowSums(na.rm = TRUE),
+         T22=select(., min1321:min1380) %>% rowSums(na.rm = TRUE),
+         T23=select(., min1381:min1440) %>% rowSums(na.rm = TRUE)
+         ) %>% 
+  pivot_longer(cols = T00:T23,values_to = 'activity',names_to = 'hour') %>% 
+  select(sex,age,bmi,education,hour,activity) %>% 
+  ggplot(aes(x=hour,y=activity, colour = sex))+geom_point()+facet_grid(~education)+labs(
+    title = " Hourly Activity",
+    x = "Hour)",
+    y = "Activity",
+    color = "Sex"  )+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+
+Based on this graph we can make conclusions about when people are most and least active. It seems that people are least active in the middle of the night/ early hours of the morning. Activity rises until about mid day where it starts to decline again. We can also see some outliers of people who were particularly active late in the evening. 
