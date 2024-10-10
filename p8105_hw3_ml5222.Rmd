@@ -85,6 +85,9 @@ there seems to be more uniform distribution across the other education levels wi
 
 Looking at total activity 
 ```{r}
-
+NHANES_full %>% 
+  mutate(total_activity=select(., min1:min1440) %>% rowSums(na.rm = TRUE)) %>% 
+  select(seqn,sex,age,education,total_activity) %>% 
+  ggplot(aes(x=age,y=total_activity,colour = sex))+geom_point()+facet_grid(~education)+geom_smooth(se=FALSE)
 ```
 
