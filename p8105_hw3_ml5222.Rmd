@@ -180,4 +180,13 @@ citibike_full %>%
 summarise(median_duration=median(duration)) %>% 
 ggplot(aes(x=weekdays,y=median_duration, colour = as.factor(year)))+geom_point()+facet_grid(~month)+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 ```
+
 By looking at this visualization we can see that during July of 2020 people tended to take the longest bike rides. This was likely due to the ongoing pandemic. However median duration is down in both months in 2024 when compared to the same month in 2020. This could indicate an overall trend of shorter rides over the years. The lower ride duration in Jan compared to July is likely due to the seasons colder weather. There seems to be a slight increase in ride duration on the weekends (Saturday and Sunday) other then Sundays in Jan 2024. 
+
+```{r}
+citibike_full %>% 
+  filter(year==2024) %>% 
+  ggplot(aes(x=month,y=duration,fill = rideable_type))+geom_boxplot()+facet_grid(~member_casual)
+  
+```
+The difference between Jan and July duration are less pronounced in this visualization but still present. There seems to also be a slightly larger IQR for the casual riders, although both groups have a large number of longer ride outliers. There is a slight decrease in ride duration of electric bikes within the casual riders, but remains fairly consistent within the member group. 
