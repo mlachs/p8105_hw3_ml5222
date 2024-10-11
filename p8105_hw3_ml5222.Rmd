@@ -147,18 +147,37 @@ bike_july_2024= read_csv('citibike/July 2024 Citi.csv') %>%
 citibike_full=
   bind_rows(bike_jan_2020,bike_july_2020,bike_jan_2024,bike_july_2024) %>% 
   mutate(rideable_type=as.factor(rideable_type),
-         member_casual=as.factor(member_casual))
+         member_casual=as.factor(member_casual),
+        weekdays=factor(weekdays,levels=c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday")))
 ```
 
 Describe the data set
 
-This data contains citibike ride information for two months in different seasons, Jan and July in two different years, 2020 and 2024. There is a total of `r count(citibike_full)` rides recorded in this data with a mean ride duration of rides under 4 hours of `r mean(pull(citibike_full,duration))` . The breakdown of these measures by month and year can be seen below 
+This data contains citibike ride information for two months in different seasons, Jan and July in two different years, 2020 and 2024. There is a total of `r count(citibike_full)` rides recorded in this data with a mean ride duration of rides under 4 hours of `r mean(pull(citibike_full,duration))`. There are `r citibike_full %>% distinct(start_station_name) %>% count()` distinct starting stations. 
 
 
 ```{r}
 citibike_full %>% 
-  group_by(month,year) %>% 
-  summarise(count=n(),
-            mean_duration=mean(duration))
-
+  group_by(month,year,member_casual) %>% 
+  summarise(count=n()) %>% 
+  pivot_wider(names_from = member_casual,values_from = count)
 ```
+Looking at the counts of rides between members and casual riders, it seems there are much more member riders then casual riders. However, the difference is lower in magnitude during the month of July, likely due to the nicer weather and therefore more casual rides. It also seems like the program overall has gained popularity over the four year period. 
+
+Top 5 stations for July 2024
+```{r}
+citibike_full %>% 
+  filter(month=='July',year==2024) %>% 
+  group_by(start_station_name) %>% 
+  count() %>% 
+  arrange(desc(n)) %>% 
+  head(5)
+```
+
+```{r}
+citibike_full %>% 
+    group_by(weekdays,month,year) %>% 
+summarise(median_duration=median(duration)) %>% 
+ggplot(aes(x=weekdays,y=median_duration, colour = as.factor(year)))+geom_point()+facet_grid(~month)+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+By looking at this visualization we can see that during July of 2020 people tended to take the longest bike rides. This was likely due to the ongoing pandemic. However median duration is down in both months in 2024 when compared to the same month in 2020. This could indicate an overall trend of shorter rides over the years. The lower ride duration in Jan compared to July is likely due to the seasons colder weather. There seems to be a slight increase in ride duration on the weekends (Saturday and Sunday) other then Sundays in Jan 2024. 
